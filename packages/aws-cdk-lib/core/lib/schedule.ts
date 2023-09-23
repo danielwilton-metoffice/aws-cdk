@@ -44,13 +44,13 @@ export abstract class Schedule {
    *
    * Rates may be defined with any unit of time, but when converted into minutes, the duration must be a positive whole number of minutes.
    */
-  protected static protectedRate(duration: Duration): Schedule {
+  protected static protectedRate(duration: Duration): string {
     if (duration.isUnresolved()) {
       const validDurationUnit = ['minute', 'minutes', 'hour', 'hours', 'day', 'days'];
       if (validDurationUnit.indexOf(duration.unitLabel()) === -1) {
         throw new Error("Allowed units for scheduling are: 'minute', 'minutes', 'hour', 'hours', 'day', 'days'");
       }
-      return new LiteralSchedule(`rate(${duration.formatTokenToNumber()})`);
+      return `rate(${duration.formatTokenToNumber()})`;
     }
     if (duration.toMinutes() === 0) {
       throw new Error('Duration cannot be 0');
@@ -59,7 +59,7 @@ export abstract class Schedule {
     let rate = maybeRate(duration.toDays({ integral: false }), 'day');
     if (rate === undefined) { rate = maybeRate(duration.toHours({ integral: false }), 'hour'); }
     if (rate === undefined) { rate = makeRate(duration.toMinutes({ integral: true }), 'minute'); }
-    return new LiteralSchedule(rate);
+    return rate;
   }
 
   /**

@@ -17,7 +17,7 @@ export abstract class Schedule extends CoreSchedule {
    * Construct a schedule from an interval and a time unit. Must be a whole number of seconds.
    */
   public static rate(duration: Duration): Schedule {
-    return super.protectedRate(duration);
+    return new LiteralSchedule(super.protectedRate(duration));
   }
 
   /**
@@ -45,3 +45,14 @@ export abstract class Schedule extends CoreSchedule {
  * @deprecated use core.CronOptions instead
  */
 export interface CronOptions extends CoreCronOptions {}
+
+class LiteralSchedule extends Schedule {
+  constructor(
+    public readonly expressionString: string,
+    public readonly timeZone?: TimeZone,
+  ) {
+    super();
+  }
+
+  public _bind() {}
+}

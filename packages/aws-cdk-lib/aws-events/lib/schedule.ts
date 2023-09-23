@@ -1,4 +1,4 @@
-import { Duration, Schedule as CoreSchedule } from '../../core';
+import { Duration, Schedule as CoreSchedule, TimeZone } from '../../core';
 
 /**
  * Schedule for scheduled event rules
@@ -23,7 +23,7 @@ export abstract class Schedule extends CoreSchedule {
    * Rates may be defined with any unit of time, but when converted into minutes, the duration must be a positive whole number of minutes.
    */
   public static rate(duration: Duration): Schedule {
-    return super.protectedRate(duration);
+    return new LiteralSchedule(super.protectedRate(duration));
   }
 
   /**
@@ -32,6 +32,17 @@ export abstract class Schedule extends CoreSchedule {
   public static cron(options: CronOptions): Schedule {
     return super.protectedCron(options, 'aws-events');
   }
+}
+
+class LiteralSchedule extends Schedule {
+  constructor(
+    public readonly expressionString: string,
+    public readonly timeZone?: TimeZone,
+  ) {
+    super();
+  }
+
+  public _bind() {}
 }
 
 /**
